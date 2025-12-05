@@ -1,0 +1,49 @@
+@startuml
+title SEQUENCE DIAGRAM – Publikasi Data (Sederhana)
+
+actor Masyarakat as M
+actor Dinas as D
+participant Sistem as SYS
+database Database as DB
+participant Dashboard as DASH
+
+== DINAS MENYIAPKAN PUBLIKASI ==
+D -> SYS : Buka menu publikasi
+activate D
+activate SYS
+
+SYS -> DB : Ambil data (sekolah + anggaran + pengaduan = diverifikasi)
+activate DB
+DB --> SYS : Data gabungan
+deactivate DB
+
+SYS -> DASH : Tampilkan draft publikasi
+activate DASH
+DASH --> D : Draft tampil
+deactivate DASH
+
+D -> SYS : Submit publikasi (draft)
+SYS -> DB : Simpan draft publikasi
+activate DB
+DB --> SYS : OK
+deactivate DB
+deactivate SYS
+deactivate D
+
+== PUBLIKASI ==
+D -> SYS : Publish data
+activate D
+activate SYS
+
+SYS -> DB : Update status publikasi = dipublikasikan
+activate DB
+DB --> SYS : OK
+deactivate DB
+
+SYS -> DASH : Kirim data publikasi
+DASH --> M : Data publik tampil
+
+deactivate SYS
+deactivate D
+
+@enduml

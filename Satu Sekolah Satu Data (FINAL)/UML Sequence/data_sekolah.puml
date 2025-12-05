@@ -1,0 +1,52 @@
+@startuml
+title SEQUENCE DIAGRAM – Pengelolaan Data Sekolah
+
+actor Masyarakat as M
+actor Sekolah as S
+actor Dinas as D
+participant Sistem as SYS
+database Database as DB
+participant Dashboard as DASH
+
+== SEKOLAH INPUT DATA SEKOLAH ==
+S -> SYS : Buka menu "Input Data Sekolah"
+activate S
+activate SYS
+
+SYS -> DASH : Tampilkan form input
+activate DASH
+DASH --> S : Form ditampilkan
+deactivate DASH
+
+S -> SYS : Submit Data Sekolah
+SYS -> DB : Insert data_sekolah
+activate DB
+DB --> SYS : OK
+deactivate DB
+SYS --> D : Notifikasi data baru
+deactivate SYS
+deactivate S
+
+== DINAS VERIFIKASI ==
+D -> SYS : Buka menu verifikasi data sekolah
+activate D
+activate SYS
+
+SYS -> DB : Ambil data sekolah
+activate DB
+DB --> SYS : Data sekolah
+deactivate DB
+
+SYS --> D : Tampilkan data untuk verifikasi
+
+D -> SYS : Verifikasi (Setujui / Revisi)
+SYS -> DB : Update status verifikasi
+activate DB
+DB --> SYS : OK
+deactivate DB
+
+SYS --> S : Notifikasi hasil verifikasi
+deactivate SYS
+deactivate D
+
+@enduml

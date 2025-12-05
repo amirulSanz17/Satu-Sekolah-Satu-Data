@@ -1,0 +1,76 @@
+@startuml
+title SEQUENCE DIAGRAM – Pengaduan Masyarakat (Revisi Tanpa PAR + Dashboard)
+
+actor Masyarakat as M
+actor Sekolah as S
+actor Dinas as D
+participant Sistem as SYS
+database Database as DB
+participant Dashboard as DASH
+
+== BUAT PENGADUAN ==
+M -> SYS : Buka menu Pengaduan
+activate M
+activate SYS
+
+SYS -> DASH : Tampilkan form pengaduan
+activate DASH
+DASH --> M : Form tampil
+deactivate DASH
+
+M -> SYS : Submit Pengaduan
+SYS -> DB : Insert pengaduan
+activate DB
+DB --> SYS : OK
+deactivate DB
+
+' Notifikasi ke sekolah
+SYS --> S : Notifikasi pengaduan baru
+
+' Notifikasi ke dinas
+SYS --> D : Notifikasi pengaduan baru
+
+deactivate SYS
+deactivate M
+
+== SEKOLAH TINDAK LANJUT ==
+S -> SYS : Buka detail pengaduan
+activate S
+activate SYS
+
+SYS -> DB : Ambil data pengaduan
+activate DB
+DB --> SYS : Data pengaduan
+deactivate DB
+
+SYS --> S : Tampilkan data pengaduan
+
+S -> SYS : Update status awal pengaduan
+SYS -> DB : Update pengaduan
+activate DB
+DB --> SYS : OK
+deactivate DB
+
+deactivate SYS
+deactivate S
+
+== VERIFIKASI DINAS ==
+D -> SYS : Verifikasi pengaduan
+activate D
+activate SYS
+
+SYS -> DB : Insert verifikasi dinas
+activate DB
+DB --> SYS : OK
+deactivate DB
+
+' Kirim hasil verifikasi ke masyarakat
+SYS --> M : Status akhir pengaduan
+
+' Kirim hasil verifikasi ke sekolah
+SYS --> S : Status akhir pengaduan
+
+deactivate D
+deactivate SYS
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+title SEQUENCE DIAGRAM – Proses Anggaran Sekolah
+
+actor Masyarakat as M
+actor Sekolah as S
+actor Dinas as D
+participant Sistem as SYS
+database Database as DB
+participant Dashboard as DASH
+
+== SEKOLAH AJUKAN ANGGARAN ==
+S -> SYS : Buka menu Anggaran
+activate S
+activate SYS
+
+SYS -> DASH : Tampilkan form anggaran
+activate DASH
+DASH --> S : Form tampil
+deactivate DASH
+
+S -> SYS : Submit pengajuan anggaran
+SYS -> DB : Insert data_anggaran
+activate DB
+DB --> SYS : OK
+deactivate DB
+SYS --> D : Notifikasi pengajuan baru
+deactivate SYS
+deactivate S
+
+== DINAS VERIFIKASI ==
+D -> SYS : Buka menu verifikasi anggaran
+activate D
+activate SYS
+
+SYS -> DB : Ambil data anggaran
+activate DB
+DB --> SYS : Data anggaran
+deactivate DB
+
+SYS --> D : Tampilkan untuk verifikasi
+
+D -> SYS : Setujui / Tolak
+SYS -> DB : Update status anggaran
+activate DB
+DB --> SYS : OK
+deactivate DB
+SYS --> S : Notifikasi hasil verifikasi
+
+deactivate SYS
+deactivate D
+
+@enduml

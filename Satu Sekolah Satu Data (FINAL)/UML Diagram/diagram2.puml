@@ -1,0 +1,230 @@
+@startuml
+title UML Class Diagram Lengkap + Multiplicity + Asosiasi / Agregasi / Komposisi + Method
+
+
+' ==========================================================
+'                          ENTITY USER
+' ==========================================================
+class masyarakat {
+  + id_masyarakat : int
+  + nama : varchar
+  + email : varchar
+  + password : varchar
+  + tanggal_daftar : date
+
+  + login()
+  + register()
+  + updateProfil()
+  + buatPengaduan()
+  + lihatPengaduan()
+}
+
+class sekolah_akun {
+  + id_sekolah_akun : int
+  + nama_operator : varchar
+  + email : varchar
+  + password : varchar
+  + tanggal_daftar : date
+
+  + login()
+  + updateAkun()
+  + kelolaDataSekolah()
+  + uploadDokumenSekolah()
+}
+
+class dinas_akun {
+  + id_dinas_akun : int
+  + nama_petugas : varchar
+  + email : varchar
+  + password : varchar
+  + jabatan : varchar
+  + tanggal_daftar : date
+
+  + login()
+  + verifikasiData()
+  + publikasiData()
+  + kirimTanggapan()
+}
+
+
+' ==========================================================
+'                           SEKOLAH
+' ==========================================================
+class sekolah {
+  + id_sekolah : int
+  + id_sekolah_akun : int
+  + nama_sekolah : varchar
+  + alamat : text
+  + status_akreditasi : varchar
+  + jumlah_guru : int
+  + jumlah_siswa : int
+  + kebutuhan_fasilitas : text
+  + id_verifikasi : int
+
+  + updateProfilSekolah()
+  + tambahFasilitas()
+  + lihatDokumen()
+  + ajukanAnggaran()
+}
+
+class fasilitas_sekolah {
+  + id_fasilitas : int
+  + id_sekolah : int
+  + nama_fasilitas : varchar
+  + kondisi_fasilitas : varchar
+  + kebutuhan_perbaikan : text
+
+  + updateFasilitas()
+  + cekKondisi()
+}
+
+class dokumen_sekolah {
+  + id_dokumen : int
+  + id_sekolah : int
+  + judul : varchar
+  + file_path : varchar
+  + tanggal_upload : date
+
+  + uploadDokumen()
+  + hapusDokumen()
+}
+
+
+' ==========================================================
+'                          PENGADUAN
+' ==========================================================
+class pengaduan {
+  + id_pengaduan : int
+  + id_masyarakat : int
+  + id_sekolah : int
+  + tanggal_pengaduan : date
+  + isi_pengaduan : text
+  + status_pengaduan : enum
+  + id_verifikasi : int
+
+  + buatPengaduan()
+  + updateStatus()
+  + lihatDetail()
+}
+
+
+' ==========================================================
+'                           ANGGARAN
+' ==========================================================
+class anggaran {
+  + id_anggaran : int
+  + id_sekolah : int
+  + id_dinas_akun : int
+  + tahun_anggaran : year
+  + total_pengajuan : decimal
+  + total_disetujui : decimal
+  + status_anggaran : enum
+  + tanggal_pengajuan : date
+
+  + ajukanAnggaran()
+  + revisiAnggaran()
+  + setujuiAnggaran()
+  + tambahDetailAnggaran()
+}
+
+class detail_anggaran {
+  + id_detail : int
+  + id_anggaran : int
+  + jenis_pengeluaran : varchar
+  + jumlah : decimal
+  + keterangan : text
+
+  + updateDetail()
+  + hitungTotal()
+}
+
+class dokumen_anggaran {
+  + id_dokumen : int
+  + id_anggaran : int
+  + nama_dokumen : varchar
+  + file_path : varchar
+  + tanggal_upload : date
+
+  + uploadDokumenAnggaran()
+  + hapusDokumenAnggaran()
+}
+
+class transparansi_anggaran {
+  + id_transparansi : int
+  + id_anggaran : int
+  + ringkasan : text
+  + url_dokumen : varchar
+  + tanggal_upload : date
+
+  + publikasiAnggaran()
+  + updateRingkasan()
+}
+
+
+' ==========================================================
+'                     VERIFIKASI & PUBLIKASI
+' ==========================================================
+class verifikasi {
+  + id_verifikasi : int
+  + id_dinas_akun : int
+  + tipe_objek : enum
+  + id_objek : int
+  + hasil_verifikasi : text
+  + catatan_verifikasi : text
+  + tanggal_verifikasi : date
+
+  + lakukanVerifikasi()
+  + setujui()
+  + tolak()
+}
+
+class kategori_publikasi {
+  + id_kategori : int
+  + nama_kategori : varchar
+
+  + tambahKategori()
+  + updateKategori()
+}
+
+class data_publik {
+  + id_publik : int
+  + judul : varchar
+  + ringkasan : text
+  + tipe_objek : enum
+  + id_objek : int
+  + id_dinas_akun : int
+  + tanggal_publikasi : date
+  + status : enum
+  + id_kategori : int
+
+  + publish()
+  + updateStatusPublik()
+  + arsipkan()
+}
+
+
+' ==========================================================
+'                   RELASI + MULTIPLICITY
+' ==========================================================
+
+masyarakat "1" --> "0..*" pengaduan : membuat
+sekolah "1" --> "0..*" pengaduan : menerima
+
+sekolah_akun "1" --> "0..1" sekolah : mengelola
+
+sekolah "1" *-- "0..*" fasilitas_sekolah : memiliki
+sekolah "1" *-- "0..*" dokumen_sekolah : mempunyai
+
+anggaran "1" *-- "1..*" detail_anggaran
+anggaran "1" *-- "0..*" dokumen_anggaran
+anggaran "1" *-- "0..*" transparansi_anggaran
+verifikasi "1" --> "1..*" anggaran : memverifikasi
+verifikasi "1" --> "1..*" sekolah : memverifikasi
+verifikasi "1" --> "1..*" pengaduan : memverifikasi
+
+dinas_akun "1" --> "0..*" verifikasi : melakukan
+
+kategori_publikasi "1" o-- "0..*" data_publik : mengelompokkan
+dinas_akun "1" o-- "0..*" data_publik : menerbitkan
+
+@enduml
